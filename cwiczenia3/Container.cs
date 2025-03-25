@@ -2,30 +2,29 @@
 
 public abstract class Container
 {
-    protected Container(char type)
+    private static int _idNum;
+
+    protected Container(char containerType, int height, int weight, int containerDepth)
     {
-        _type = type;
-        _identifier = _idNum;
+        ContainerType = containerType;
+        Height = height;
+        ContainerDepth = containerDepth;
+        ContainerWeight = weight;
         _idNum++;
+        SerialNumber = "KON-" + ContainerType + "-" + _idNum; // Ustawienie numeru seryjnego
     }
 
-    private int LoadedWeight { get; set; }
-    private int Height { get; set; }
-    private int ContainerWeight { get; set; }
-    private int Depth { get; set; }
-    private char _type;
-    private int _identifier;
-    private static int _idNum = 0;
+    protected int LoadedWeight { get; set; }
+    public int Height { get; set; }
+    public int ContainerWeight { get; set; }
+    public int ContainerDepth { get; set; }
+    private char ContainerType { get; set; }
 
-    public string SerialNumber
-    {
-        get { throw new NotImplementedException(); }
-        set => SerialNumber = "KON-" + _type + "-" + _identifier;
-    }
+    public string SerialNumber { get; }
 
-    public int MaxCargoWeight { get; set; }
+    protected int MaxCargoWeight { get; init; }
 
-    public void UnloadCargo(int cargoWeight)
+    protected virtual void UnloadCargo(int cargoWeight)
     {
         LoadedWeight -= cargoWeight;
     }
@@ -35,7 +34,12 @@ public abstract class Container
         LoadedWeight += cargoWeight;
         if (LoadedWeight > MaxCargoWeight)
         {
-            throw new OverfillException("Cargo weight is too large.");
+            throw new OverfillException("Cargo weight too large.");
         }
+    }
+
+    public override string ToString()
+    {
+        return "Serial number: " + SerialNumber + ", height: " + Height + ", container weight: " + ContainerWeight;
     }
 }
